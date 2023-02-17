@@ -1,133 +1,62 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-int main()
-{
-    char n[20];
-    
-    char *ones[] = {"zero","one","two","three","four","five","six","seven","eight","nine"};
-    char *ens[] = {" ","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"};
-    char *tens[] = {" "," ","twenty","thirty","fourty","fifty","sixty","seventy","eighty","ninety"};
-    char *powers[] = {"hundred","thousand"};
-while(1) {   
-    printf(" \nEnter the integer : ");
-    scanf("%s",n);
-    
-    int no;
-    int l = strlen(n);
-    
-    while(l==1){
-        no = n[0]-48;
-        printf("%s -> %s",n,ones[no]);
-        break;
-    };
-    
-    while(l==2){
-        /*switch(n[0]) {
-            case 49:
-            no = (n[0]-48) + (n[1]-48);
-            printf("%s -> %s",n,ens[no]);
-            
-            case 48:
-            no = (n[0] -48) + (n[1]-48);
-            printf("%s -> %s",n,tens[no]);
-            
-            default:
-            no = n[0] -48;
-            printf("%s",tens[no]);
-            no = n[1] -48;
-            printf("%s",ones[no]);*/
+char* ones[] = {"", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+char* teens[] = {"ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"};
+char* tens[] = {"", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
 
-	   if(n[0] == 48){
-		no = (n[0]-48) + (n[1]-48);
-                printf("%s -> %s",n,tens[no]);	
-        };
+void convert(int num, char* words) {
+    if (num < 0 || num > 999999) {
+        strcpy(words, "Invalid input");
+        return;
+    }
+    if (num == 0) {
+        strcpy(words, "zero");
+        return;
+    }
+    if (num < 10) {
+        strcpy(words, ones[num]);
+        return;
+    }
+    if (num < 20) {
+        strcpy(words, teens[num - 10]);
+        return;
+    }
+    if (num < 100) {
+        sprintf(words, "%s %s", tens[num / 10], ones[num % 10]);
+        return;
+    }
+    if (num < 1000) {
+        sprintf(words, "%s hundred %s", ones[num / 100], "");
+        if (num % 100)
+            convert(num % 100, words + strlen(words));
+        return;
+    }
+    if (num < 1000000) {
+        convert(num / 1000, words);
+        strcat(words, " thousand");
+        if (num % 1000) {
+            if (num % 1000 < 100)
+                strcat(words, " and");
+            strcat(words, " ");
+            convert(num % 1000, words + strlen(words));
+        }
+        return;
+    }
+}
 
-	   if(n[0] == 49){
-		no = (n[0]-48) + (n[1]-48);
-                printf("%s -> %s",n,ens[no]);	
-          };
-
-	   if(n[0] != 48 && n[0] != 49){
-		        no = n[0] -48;
-                printf("%s ",tens[no]);
-                no = n[1] -48;
-                printf("%s ",ones[no]);	
-        };	
-        break;
-
-        };
-	
-	while(l==3){
-	
-	no = n[0]-48;
-    printf("%s %s ",ones[no],powers[0]);
-        
-        if(n[1] == 48 && n[2] != 48){
-		    no = n[2]-48;
-            printf("%s ",ones[no]);
-			
-        };
-
-	    if(n[1] == 49){
-		    no = (n[1]-48) + (n[2]-48);
-            printf("%s ",ens[no]);	
-          };
-
-	    if(n[1] != 48 && n[1] != 49){
-		    no = n[1] -48;
-            printf("%s ",tens[no]);
-            no = n[2] -48;
-            printf("%s ",ones[no]);	
-        };
-        break;
-    };
-	
-	while(l==4){
-	
-	    no = n[0]-48;
-        printf("%s %s ",ones[no],powers[1]);
-        if(n[1] == 48 ){
-		    if(n[2] == 48 && n[3] != 48){
-
-		        no = n[3]-48;
-                printf("%s ",ones[no]);
-		    };
-		
-		    if(n[2] == 49 && n[3] != 48){
-		        no = (n[2]-48) + (n[3]-48);
-                printf("%s ",ens[no]);	
-            };
-
-		    if(n[2] != 48 && n[2] != 49 && n[3] != 48){
-		        no = n[2] -48;
-                printf("%s ",tens[no]);
-                no = n[3] -48;
-                printf("%s ",ones[no]);
-		    };
-        };
-        if(n[1] != 48 && n[3] != 48){
-		        no=n[1]-48;
-		        printf("%s %s ",ones[no],powers[0]);
-		        if(n[2] == 49 && n[3] != 48){
-		          no = (n[2]-48)+(n[3]-48);
-		          printf("%s ",ens[no]);
-		        };
-		        if(n[2] != 49 && n[3] != 48){
-		            no = n[2] -48;
-                    printf("%s ",tens[no]);
-                    no = n[3] -48;
-                    printf("%s ",ones[no]);
-		        };
-		    };
-        break;
-
-	
-
-	 
-	};
-      
-};
-    
+int main() {
+    int num;
+    char words[100];
+    while (1) {
+        printf("Enter a number between 0 and 999999 (enter a number >= 1000000 to exit): ");
+        scanf("%d", &num);
+        if (num >= 1000000) {
+            break;
+        }
+        convert(num, words);
+        printf("%s\n", words);
+    }
     return 0;
 }
